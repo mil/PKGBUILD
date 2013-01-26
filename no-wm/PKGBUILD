@@ -1,0 +1,31 @@
+# Maintainer: Miles Sandlar <mil at userbound.com>
+pkgname=no-wm
+pkgver=20130126
+pkgrel=1
+pkgdesc='Patrick Hallers no-wm from Github'
+arch=('i686' 'x86_64')
+url='https://github.com/patrickhaller/no-wm'
+license=('MIT')
+depends=()
+makedepends=('git' 'pkgconfig' 'xorg-utils')
+_gitroot=https://github.com/patrickhaller/no-wm.git
+_gitname=no-wm
+
+build() {
+  cd "$srcdir"
+  if [ -d "$_gitname" ]; then
+    cd "$_gitname" && git pull origin
+  else
+    git clone "$_gitroot" "$_gitname"
+  fi
+  
+  cd "$srcdir/${_gitname}"
+  make
+}
+
+package() {
+  cd "$srcdir/${_gitname}"
+  mkdir -p ${pkgdir}/usr/bin/
+  mv x-alt-tab x-focus-manager x-move-resize x-placement-manager x-session x-undecorate x-window-list ${pkgdir}/usr/bin/
+  install -D -m644 COPYING.txt "${pkgdir}/usr/share/licenses/${pkgname}/COPYING.txt"
+}
